@@ -17,6 +17,7 @@ from .frames import Frame
 from .utils import (format_timedelta, get_frame_from_argument,
                     get_start_time_for_period, options, safe_save,
                     sorted_groupby, style)
+from .plugins import flushex
 
 
 class MutuallyExclusiveOption(click.Option):
@@ -971,6 +972,23 @@ def config(context, key, value, edit):
         wconfig.set(section, option, value)
         watson.config = wconfig
         watson.save()
+
+
+@cli.command()
+@click.argument('filename', type=click.Path(exists=True))
+@click.argument('month')
+@click.pass_obj
+def export(watson, filename, month):
+    """
+    Write the contents of the logfile for one month to an Excel sheet.
+
+    Example:
+
+    \b
+    $ watson export Zeiterfassung.xls dez
+    """
+    flushex(watson, filename, month)
+    click.echo("done. press enter to exit.")
 
 
 @cli.command()
